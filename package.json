@@ -1,0 +1,16 @@
+{
+  "name": "newman",
+  "version": "1.0.0",
+  "description": "",
+  "main": "newman.js",
+  "dependencies": {
+    "jsonexport": "^3.0.1",
+    "newman": "^5.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

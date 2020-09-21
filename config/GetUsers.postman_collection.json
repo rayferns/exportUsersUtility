@@ -1,0 +1,183 @@
+{
+	"info": {
+		"_postman_id": "6ddd086a-9c4c-4543-86cd-f312cc511725",
+		"name": "GetUsers",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Token Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"console.log(jsonData);",
+							"",
+							"pm.globals.set(\"ACCESS_TOKEN\", jsonData.access_token);"
+						],
+						"id": "a2c4df58-6fb2-4651-8ea6-6a5da4508215"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"// var data = pm.iterationData.get(\"id\")\r",
+							"// console.log('excel data',data)"
+						],
+						"id": "e8c8cbef-3600-4a71-827e-e9dcd48c3e86"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{Username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{Password}}",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{ClientId}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{ClientSecret}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "{{UserSvc}}/oauth2/token",
+					"host": [
+						"{{UserSvc}}"
+					],
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllUsers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const responseData = pm.response.json()",
+							"pm.environment.set(\"rowsCount\", responseData.totalCount);",
+							"var countCaptured = pm.environment.get(\"countCaptured\");",
+							"if (responseData.totalCount > 1 && countCaptured == 'false') {",
+							"    pm.environment.set(\"countCaptured\", 'true');",
+							"    postman.setNextRequest(\"GetAllUsers\");",
+							"}",
+							"else {",
+							"    var excelExportData;",
+							"    pm.environment.set(\"countCaptured\", 'false');",
+							"    pm.environment.set(\"rowsCount\", 1);",
+							"    if (responseData.records.length > 0) {",
+							"        excelExportData = responseData.records.map(user => {",
+							"            return ({",
+							"                id: user.id,",
+							"                username: user.username,",
+							"                firstName: user.firstName,",
+							"                lastName: user.lastName,",
+							"                email: user.email",
+							"            })",
+							"        });",
+							"        console.log(\"user to export\",excelExportData)",
+							"        pm.environment.set(\"excelExportData\", JSON.stringify(excelExportData));",
+							"    }",
+							"    else{",
+							"        pm.environment.set(\"excelExportData\",'');",
+							"    }",
+							"}",
+							"",
+							""
+						],
+						"id": "b9bcc1d7-0e5a-4ddf-8451-41f76432e7be"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"//  pm.environment.clear(\"excelExportData\");"
+						],
+						"id": "82295392-0d0c-48c1-85f9-160cd0a89b41"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{ACCESS_TOKEN}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \n  \"rows\":\"{{rowsCount}}\",\n  \"search\": [\n    {\n      \"field\": \"email\",\n      \"condition\": \"contains\",\n      \"searchValue\": \"{{email}}\"\n    }\n  ]\n}",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{UserSvc}}/UserAccessControlService/User/List",
+					"host": [
+						"{{UserSvc}}"
+					],
+					"path": [
+						"UserAccessControlService",
+						"User",
+						"List"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": []
+}
