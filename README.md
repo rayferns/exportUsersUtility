@@ -18,3 +18,5 @@ node .\exportUsers.js [text search]
 ```
 - Hit enter
 - Review the file .\exportedFiles\ExportUserData.csv
+
+Note: Due to security reasons, the environment login credentials to UAT and PROD environments have been changed to 'xxxxxxxxx', replace this with your own login credentials to Admin PCT tool
