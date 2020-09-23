@@ -21,6 +21,7 @@ node .\exportUsers.js [text search]
 
 Note: 
 Files within the config folder:
-Prod_DeleteUsers.postman_environment.json
+Prod_DeleteUsers.postman_environment.json & 
 UAT_DeleteUsers.postman_environment.json
+
 Due to security reasons, the environment login credentials for UAT and PROD environments have been changed to 'xxxxxxxxx', replace this with your own login credentials to Admin PCT tool
